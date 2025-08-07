@@ -96,5 +96,4 @@ async def extract_url(url: str) -> str:
         return soup.get_text().strip()
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8000))
-    mcp.run(transport="streamable-http", port=port, host="0.0.0.0")
+    mcp.run(transport="streamable-http")
