@@ -1,0 +1,4 @@
+mcp==1.12.3
+httpx
+beautifulsoup4
+pyjwt[crypto]
