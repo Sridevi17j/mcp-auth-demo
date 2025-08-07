@@ -4,11 +4,12 @@ from pydantic import AnyHttpUrl
 from mcp.server.auth.provider import AccessToken, TokenVerifier
 from mcp.server.auth.settings import AuthSettings
 from mcp.server.fastmcp import FastMCP
+import os
 
 class Auth0TokenVerifier(TokenVerifier):
     """Auth0 token verifier"""
 
-    def init(self, domain: str, audience: str):
+    def __init__(self, domain: str, audience: str):
         self.domain = domain
         self.audience = audience
         self.issuer = f"https://{domain}/"
@@ -69,8 +70,9 @@ class Auth0TokenVerifier(TokenVerifier):
             return None
 
 # Auth0 config
-AUTH0_DOMAIN = "dev-gkajzozs6ojdzi2l.us.auth0.com"
-AUTH0_AUDIENCE = "https://mcp-server/api"
+AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN", "dev-gkajzozs6ojdzi2l.us.auth0.com")
+AUTH0_AUDIENCE = os.getenv("AUTH0_AUDIENCE", "https://mcp-server/api")
+SERVER_URL = os.getenv("SERVER_URL", "http://localhost:8000")
 
 # Create FastMCP with Auth0
 mcp = FastMCP(
@@ -78,8 +80,8 @@ mcp = FastMCP(
     token_verifier=Auth0TokenVerifier(AUTH0_DOMAIN, AUTH0_AUDIENCE),
     auth=AuthSettings(
         issuer_url=AnyHttpUrl(f"https://{AUTH0_DOMAIN}/"),
-        resource_server_url=AnyHttpUrl("http://localhost:8000/mcp"),
-        required_scopes=[],  # Remove required scopes for now
+        resource_server_url=AnyHttpUrl(f"{SERVER_URL}/mcp"),  # Use environment variable
+        required_scopes=[],
     ),
 )
 
